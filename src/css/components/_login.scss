@@ -1,0 +1,13 @@
+.c-login-form {
+  &__input {
+    float: right;
+    width: 180px;
+    border: 1px solid #c9c9c9;
+  }
+
+  &__label {
+    height: 30px;
+    display: block;
+    width: 300px;
+  }
+}
