@@ -9,7 +9,7 @@ jest.mock('../src/js/config', () => (
         login: '/login',
         verifyToken: '/verifyToken',
       },
-    }
+    },
   }
 ));
 
@@ -27,7 +27,7 @@ describe('authorisation class', () => {
   describe('when logging in', () => {
     const username = 'user01';
     const password = 'password';
-    const data = { token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiTm9ybWFuIE5vcm1hbCJ9.iffiKTKqhx9qZHois_GxWSXm0nkHWnRY7kKkcEI-M_Y' }
+    const json = { token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiTm9ybWFuIE5vcm1hbCJ9.iffiKTKqhx9qZHois_GxWSXm0nkHWnRY7kKkcEI-M_Y' };
     let successCb;
     let failureCb;
     let spy;
@@ -39,7 +39,7 @@ describe('authorisation class', () => {
     });
 
     afterEach(() => {
-      spy.mockClear()
+      spy.mockClear();
     });
 
     test('the login endpoint is called with the correct data', () => {
@@ -48,84 +48,70 @@ describe('authorisation class', () => {
         body: JSON.stringify({ username, password }),
         headers: {
           'Content-Type': 'application/json',
-        }
-      }
+        },
+      };
 
-      window.fetch = jest.fn().mockImplementation(() =>
-        Promise.resolve({
-          ok: true,
-          status: 200,
-          json: () => data
-        })
-      );
+      window.fetch = jest.fn().mockImplementation(() => Promise.resolve({
+        ok: true,
+        status: 200,
+        json: () => json,
+      }));
 
       Authorization.login(username, password, successCb, failureCb);
       expect(window.fetch).toHaveBeenCalledWith('http://example.com:3333/login', data);
     });
 
     test('successfully, the success callback is called', () => {
-      window.fetch = jest.fn().mockImplementation(() =>
-        Promise.resolve({
-          ok: true,
-          status: 200,
-          json: () => data
-        })
-      );
+      window.fetch = jest.fn().mockImplementation(() => Promise.resolve({
+        ok: true,
+        status: 200,
+        json: () => json,
+      }));
 
       Authorization.login(username, password, successCb, failureCb)
         .then(() => expect(successCb).toHaveBeenCalled());
     });
 
     test('successfully, the token is stored in local storage', () => {
-      window.fetch = jest.fn().mockImplementation(() =>
-        Promise.resolve({
-          ok: true,
-          status: 200,
-          json: () => data
-        })
-      );
+      window.fetch = jest.fn().mockImplementation(() => Promise.resolve({
+        ok: true,
+        status: 200,
+        json: () => json,
+      }));
 
       Authorization.login(username, password, successCb, failureCb)
-        .then(() => expect(spy).toHaveBeenCalledWith('token', data.token));
+        .then(() => expect(spy).toHaveBeenCalledWith('token', json.token));
     });
 
     test('unsuccessfully, the failure callback is called', () => {
-      window.fetch = jest.fn().mockImplementation(() =>
-        Promise.resolve({
-          status: 401,
-          ok: false
-        })
-      );
+      window.fetch = jest.fn().mockImplementation(() => Promise.resolve({
+        status: 401,
+        ok: false,
+      }));
 
       Authorization.login(username, password, successCb, failureCb)
         .then(() => expect(failureCb).toHaveBeenCalled());
     });
 
     test('errors, the failure callback is called', () => {
-      window.fetch = jest.fn().mockImplementation(() =>
-        Promise.reject()
-      );
+      window.fetch = jest.fn().mockImplementation(() => Promise.reject());
 
       Authorization.login(username, password, successCb, failureCb)
         .then(() => expect(failureCb).toHaveBeenCalled());
     });
 
     test('unsuccessfully, the token is not stored in local storage', () => {
-      window.fetch = jest.fn().mockImplementation(() =>
-        Promise.resolve({
-          status: 401,
-          ok: false
-        })
-      );
+      window.fetch = jest.fn().mockImplementation(() => Promise.resolve({
+        status: 401,
+        ok: false,
+      }));
 
       Authorization.login(username, password, successCb, failureCb)
         .then(() => expect(spy).toHaveBeenCalledTimes(0));
     });
 
     test('errors, the token is not stored in local storage', () => {
-      window.fetch = jest.fn().mockImplementation(() =>
-        Promise.reject()
-      );
+      window.fetch = jest.fn().mockImplementation(() => Promise.reject());
 
       Authorization.login(username, password, successCb, failureCb)
         .then(() => expect(spy).toHaveBeenCalledTimes(0));
@@ -154,30 +140,26 @@ describe('authorisation class', () => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      }
+      };
 
-      window.fetch = jest.fn().mockImplementation(() =>
-        Promise.resolve({
-          ok: true,
-          status: 200
-        })
-      );
+      window.fetch = jest.fn().mockImplementation(() => Promise.resolve({
+        ok: true,
+        status: 200,
+      }));
 
       Authorization.verify(successCb, failureCb);
       expect(window.fetch).toHaveBeenCalledWith('http://example.com:3333/verifyToken', data);
     });
 
     test('successfully, the success callback is called', () => {
-      window.fetch = jest.fn().mockImplementation(() =>
-        Promise.resolve({
-          ok: true,
-          status: 200
-        })
-      );
+      window.fetch = jest.fn().mockImplementation(() => Promise.resolve({
+        ok: true,
+        status: 200,
+      }));
 
       Authorization.verify(successCb, failureCb)
         .then(() => {
-          expect(successCb).toBeCalled()
+          expect(successCb).toBeCalled();
         });
     });
 
@@ -188,28 +170,24 @@ describe('authorisation class', () => {
     });
 
     test('and there is a token, but it fails, the failure callback is called', () => {
-      window.fetch = jest.fn().mockImplementation(() =>
-        Promise.resolve({
-          ok: false,
-          status: 401
-        })
-      );
+      window.fetch = jest.fn().mockImplementation(() => Promise.resolve({
+        ok: false,
+        status: 401,
+      }));
 
       Authorization.verify(successCb, failureCb)
         .then(() => {
-          expect(failureCb).toBeCalled()
+          expect(failureCb).toBeCalled();
         });
     });
 
     test('and there is a token, but it errors, the failure callback is called', () => {
-      window.fetch = jest.fn().mockImplementation(() =>
-        Promise.reject()
-      );
+      window.fetch = jest.fn().mockImplementation(() => Promise.reject());
 
       Authorization.verify(successCb, failureCb)
         .then(() => {
-          expect(failureCb).toBeCalled()
+          expect(failureCb).toBeCalled();
         });
     });
   });
-})
+});

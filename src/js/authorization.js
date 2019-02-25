@@ -1,5 +1,5 @@
-import config from './config';
 import jwtDecode from 'jwt-decode';
+import config from './config';
 
 class Authorization {
   static getLoginUrl() {
@@ -33,12 +33,12 @@ class Authorization {
         'Content-Type': 'application/json',
       },
     })
-    .then(res => res.json())
-    .then((response) => {
-      localStorage.setItem('token', response.token);
-      successCb();
-    })
-    .catch(() => failureCb());
+      .then(res => res.json())
+      .then((response) => {
+        localStorage.setItem('token', response.token);
+        successCb();
+      })
+      .catch(() => failureCb());
   }
 
   static logout() {
@@ -50,7 +50,7 @@ class Authorization {
 
     if (!token) {
       failureCb();
-      return;
+      return null;
     }
 
     const url = Authorization.getVerifyTokenUrl();
@@ -59,11 +59,15 @@ class Authorization {
         Authorization: `Bearer ${token}`,
       },
     })
-    .then((response) => {
-      const isAuthorized = (response.status === 200 && response.ok === true);
-      isAuthorized ? successCb() : failureCb();
-    })
-    .catch(() => failureCb());
+      .then((response) => {
+        const isAuthorized = (response.status === 200 && response.ok === true);
+        if (isAuthorized) {
+          successCb();
+        } else {
+          failureCb();
+        }
+      })
+      .catch(() => failureCb());
   }
 }
 

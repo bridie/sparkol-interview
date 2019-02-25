@@ -5,7 +5,7 @@
   "scripts": {
     "build:prod": "webpack --config webpack/prod.config.js",
     "build:dev": "webpack-dev-server --hot --inline -d --config webpack/dev.config.js",
-    "lint": "./node_modules/.bin/eslint src/ --ext .jsx .",
+    "lint": "./node_modules/.bin/eslint --ext .js,.jsx .",
     "test": "jest"
   },
   "devDependencies": {

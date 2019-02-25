@@ -1,27 +1,28 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const autoprefixer = require('autoprefixer');
 
 module.exports = {
   entry: [
     path.resolve(__dirname, '../src/js/index.jsx'),
-    path.resolve(__dirname, '../src/css/style.scss')
+    path.resolve(__dirname, '../src/css/style.scss'),
   ],
   output: {
     path: path.resolve(__dirname, '../dist'),
-    filename: 'js/bundle.js'
+    filename: 'js/bundle.js',
   },
   resolve: {
-    extensions: ['*', '.js', '.jsx']
+    extensions: ['*', '.js', '.jsx'],
   },
   plugins: [
     new HtmlWebpackPlugin({
       title: 'Sparkol Interview',
-      template: path.resolve(__dirname, '../src/index.html')
+      template: path.resolve(__dirname, '../src/index.html'),
     }),
     new MiniCssExtractPlugin({
-      filename: "css/style.css"
-    })
+      filename: 'css/style.css',
+    }),
   ],
   module: {
     rules: [
@@ -29,28 +30,28 @@ module.exports = {
         test: /\.(js|jsx)$/,
         exclude: /(node_modules)/,
         use: {
-          loader: "babel-loader"
-        }
+          loader: 'babel-loader',
+        },
       },
       {
         test: /\.scss$/,
         use: [
           MiniCssExtractPlugin.loader,
-          { loader: "css-loader", options: {} },
+          { loader: 'css-loader', options: {} },
           {
-            loader: "postcss-loader",
+            loader: 'postcss-loader',
             options: {
               ident: 'postcss',
               plugins: [
-                require('autoprefixer')({
-                  'browsers': ['> 1%', 'last 2 versions']
+                autoprefixer({
+                  browsers: ['> 1%', 'last 2 versions'],
                 }),
-              ]
-            }
+              ],
+            },
           },
-          { loader: "sass-loader", options: {} }
-        ]
-      }
-    ]
-  }
+          { loader: 'sass-loader', options: {} },
+        ],
+      },
+    ],
+  },
 };
